@@ -36,7 +36,7 @@ impl SecretVault {
     }
 
     pub fn derive_key(passphrase: &str) -> [u8; 32] {
-        let salt: [u8; 16] = rand::thread_rng().gen();
+        let salt: [u8; 16] = rand::rng().random();
 
         // Using pbkdf2 with Hmac and Sha256 to derive the key
         let mut key = [0u8; 32];
@@ -49,7 +49,7 @@ impl SecretVault {
     // The following functions now take an encryption_key parameter:
     pub fn add_secret(&mut self, encryption_key: &[u8; 32], key: String, secret: String) {
         let cipher = Aes256Gcm::new_from_slice(encryption_key).unwrap();
-        let nonce: [u8; 12] = rand::thread_rng().gen();
+        let nonce: [u8; 12] = rand::rng().random();
         let encrypted_secret = cipher.encrypt(&nonce.into(), secret.as_bytes()).unwrap();
         let mut combined = nonce.to_vec();
         combined.extend(encrypted_secret);
